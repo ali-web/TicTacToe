@@ -63,7 +63,7 @@ class Game extends React.Component {
     const current = history[history.length - 1];
     const squares = current.squares.slice();
 
-    if (squares[i] || calculateWinnder(squares)) {
+    if (squares[i] || this.calculateWinnder(squares)) {
       return;
     }
 
@@ -71,12 +71,39 @@ class Game extends React.Component {
     this.setState({
       history: history.concat([{
         squares: squares,
-        coordinates: coordinates(i),
+        coordinates: this.coordinates(i),
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
     });
   }
+
+  calculateWinnder(squares) {
+    const lines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+  
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+        return squares[a]
+      }
+    }
+    return null;
+  }
+  
+  coordinates(i) {
+    const x = Math.floor(i / 3);
+    const y = i % 3;
+    return [x, y];
+  }  
 
   jumpTo(step) {
     this.setState({
@@ -88,7 +115,7 @@ class Game extends React.Component {
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinnder(current.squares);
+    const winner = this.calculateWinnder(current.squares);
 
     const moves = history.map((step, move) => {
       let description = move ? 'Go to move #' + move : 'Go to game start';
@@ -130,31 +157,3 @@ ReactDOM.render(
   <Game />,
   document.getElementById('root')
 );
-
-
-function calculateWinnder(squares) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a]
-    }
-  }
-  return null;
-}
-
-function coordinates(i) {
-  const x = Math.floor(i / 3);
-  const y = i % 3;
-  return [x, y];
-}
