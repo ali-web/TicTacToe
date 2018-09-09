@@ -51,6 +51,7 @@ class Game extends React.Component {
     this.state = {
       history: [{
         squares: Array(9).fill(null),
+        coordinates: [null, null],
       }],
       stepNumber: 0,
       xIsNext: true,
@@ -70,6 +71,7 @@ class Game extends React.Component {
     this.setState({
       history: history.concat([{
         squares: squares,
+        coordinates: coordinates(i),
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
@@ -89,7 +91,8 @@ class Game extends React.Component {
     const winner = calculateWinnder(current.squares);
 
     const moves = history.map((step, move) => {
-      const description = move ? 'Go to move #' + move : 'Go to game start';
+      let description = move ? 'Go to move #' + move : 'Go to game start';
+      if (move) description += '(' + step.coordinates[0] + ', ' + step.coordinates[1] + ')';
       return (
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}>{description}</button>
@@ -148,4 +151,10 @@ function calculateWinnder(squares) {
     }
   }
   return null;
+}
+
+function coordinates(i) {
+  const x = Math.floor(i / 3);
+  const y = i % 3;
+  return [x, y];
 }
