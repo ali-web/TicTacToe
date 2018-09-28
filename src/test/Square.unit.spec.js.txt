@@ -1,0 +1,24 @@
+import React from 'react';
+import ShallowRenderer from 'react-test-renderer/shallow';
+import { Square } from '../components';
+
+describe('Square unit tests', () => {
+    const props = {
+        onClick: "alert('hi')",
+        value: 'hi',
+    };
+    let renderer;
+
+    beforeAll(() => {
+        renderer = new ShallowRenderer();
+    });
+
+    describe('render()', () => {
+        test('render(props)', () => {
+            renderer.render(<Square {...props} />);
+            const output = renderer.getRenderOutput();   
+            expect(output.type).toBe('button');
+            expect(output.props.className).toEqual('square');
+        });    
+    });
+});

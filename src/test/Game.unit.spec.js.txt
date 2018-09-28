@@ -1,0 +1,91 @@
+import React from 'react';
+import ShallowRenderer from 'react-test-renderer/shallow';
+import { shallow, configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+
+import { Game } from '../components';
+
+configure({ adapter: new Adapter() });
+
+describe('Game unit tests', () => {
+    const props = {
+        onClick: "alert('hi')",
+        value: 'hi',
+    };
+    let wrapper;
+    let instance;
+
+    beforeAll(() => {
+        wrapper = shallow( <Game /> );
+        instance = wrapper.instance();
+    });
+
+    describe('coordinates()', () => {
+        test('coordinates(4)', () => {
+            const output = instance.coordinates(4);
+            const expected = [1, 1];
+            expect(output).toEqual(expected);
+        });
+
+        test('coordinates(6)', () => {
+            const output = instance.coordinates(6);
+            const expected = [2, 0];
+            expect(output).toEqual(expected);
+        });        
+    });
+
+    describe('calculateWinner()', () => {
+        test('calculateWinner() for an array of nulls', () => {
+            const output = instance.calculateWinnder(Array(9).fill(null));
+            const expected = null;
+            expect(output).toEqual(expected);
+        });
+
+        test('calculateWinner() with no winner', () => {
+            const input = ['X', 'O'].concat(Array(6).fill(null)).concat(['O']);
+            const output = instance.calculateWinnder(input);
+            const expected = null;
+            expect(output).toEqual(expected);
+        });
+
+        test('calculateWinner() with horizantally unique values', () => {
+            const input = Array(3).fill(null).concat(Array(3).fill('X')).concat(Array(3).fill(null));
+            const output = instance.calculateWinnder(input);
+            const expected = 'X';
+            expect(output).toEqual(expected);
+        });
+
+        test('calculateWinner() with vertically unique values', () => {
+            const input = [
+                null,  'X', 'O',
+                 'X', null, 'O',
+                 'X', null, 'O',
+            ];
+            const output = instance.calculateWinnder(input);
+            const expected = 'O';
+            expect(output).toEqual(expected);
+        });
+
+        test('calculateWinner() with diagonally unique values', () => {
+            const input = [
+                null,  'O', 'X',
+                null,  'X', 'O',
+                 'X', null, 'O',
+            ];
+            const output = instance.calculateWinnder(input);
+            const expected = 'X';
+            expect(output).toEqual(expected);
+        });
+
+        test('calculateWinner() when it is a draw', () => {
+            const input = [
+                'X', 'O', 'O',
+                'O', 'X', 'X',
+                'X', 'X', 'O',
+            ];
+            const output = instance.calculateWinnder(input);
+            const expected = '-';
+            expect(output).toEqual(expected);
+        });        
+    });
+});
