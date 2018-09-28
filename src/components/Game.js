@@ -1,7 +1,8 @@
 import React from 'react';
-import Board from './Board';
+import { Board } from '.';
+import { GameDiv, GameInfoDiv } from './GameStyle';
 
-export default class Game extends React.Component {
+export class Game extends React.Component {
   
   constructor(props) {
     super(props);
@@ -47,12 +48,20 @@ export default class Game extends React.Component {
       [2, 4, 6],
     ];
   
+    // there's a winner
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
         return squares[a]
       }
     }
+
+    // it's a draw
+    if (! squares.includes(null)) {
+      return '-';
+    }
+
+    // game is in progress
     return null;
   }
   
@@ -85,25 +94,27 @@ export default class Game extends React.Component {
     });
 
     let status = '';
-    if (winner) {
+    if (winner === '-') {
+      status = `It's a draw`;
+    } else if (winner) {
       status = 'Winnser is ' + winner;
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
 
     return (
-      <div className="game">
+      <GameDiv>
         <div className="game-board">
           <Board
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
           />
         </div>
-        <div className="game-info">
+        <GameInfoDiv>
           <div className="status">{status}</div>
           <ol>{moves}</ol>
-        </div>
-      </div>
+        </GameInfoDiv>
+      </GameDiv>
     );
   }
 }
